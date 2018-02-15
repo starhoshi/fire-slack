@@ -4,8 +4,16 @@ import 'jest'
 
 jest.setTimeout(20000)
 
+const adminOptions = <admin.AppOptions> {
+  databaseURL: 'https://sandbox-329fc.firebaseio.com',
+  storageBucket: 'sandbox-329fc.appspot.com',
+  apiKey: '',
+  authDomain: '',
+  projectId: 'sandbox-329fc'
+}
+
 beforeAll(() => {
-  Slack.initialize({ projectId: 'id' },
+  Slack.initialize(adminOptions,
     process.env.SLACK_URL as string,
     {
       channel: 'debug'
@@ -16,7 +24,16 @@ beforeAll(() => {
 let user: FirebaseFirestore.DocumentReference
 const id = 'test'
 
-test('notification', async () => {
-  const s = await Slack.send('test', { ref: { path: '/hoge' } as any })
-  expect(s).toBe('ok')
+describe('exist options', () => {
+  test('notification', async () => {
+    const s = await Slack.send('test', { ref: { path: 'version/1/sampleorder/3dxBtsj6d5nLujOuGu2L' } as any })
+    expect(s).toBe('ok')
+  })
+})
+
+describe('not exist options', () => {
+  test('notification', async () => {
+    const s = await Slack.send('test')
+    expect(s).toBe('ok')
+  })
 })

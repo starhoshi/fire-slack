@@ -1,5 +1,6 @@
 import * as FirebaseFirestore from '@google-cloud/firestore'
 import * as rp from 'request-promise'
+import * as admin from 'firebase-admin'
 
 export interface SlackParams {
   url: string
@@ -12,9 +13,9 @@ let _url: string = ''
 let _channel: string | undefined
 let _username: string | undefined
 let _iconEmoji: string | undefined
-let _adminOptions: any
+let _adminOptions: admin.AppOptions
 
-export const initialize = (adminOptions: any, incomingUrl: string, options?: { channel?: string, username?: string, iconEmoji?: string }) => {
+export const initialize = (adminOptions: admin.AppOptions, incomingUrl: string, options?: { channel?: string, username?: string, iconEmoji?: string }) => {
   _adminOptions = adminOptions
   _url = incomingUrl
   if (options) {
@@ -28,18 +29,31 @@ export interface Fields {
   title: string
   value: string
   short?: boolean
+  title_link?: string
+  color?: string
+}
+
+export const makeFirestoreUrl = (ref: FirebaseFirestore.DocumentReference) => {
+ let databaseURL = 'https://console.firebase.google.com/u/0/project/'
+  databaseURL +=  (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F'
+  const path = ref.path.replace(/\//g, '~2F')
+
+  return databaseURL + path
 }
 
 export const send = async (message: string, options?: { ref?: FirebaseFirestore.DocumentReference, error?: Error, color?: string, channel?: string, overrideFields?: Fields[], appendFields?: Fields[] }) => {
   let color: string | undefined = undefined
   let channel: string | undefined = _channel
+  let title: string | undefined = undefined
+  let firURL: string | undefined = undefined
   let fields: Fields[] = [
     { title: 'project_id', value: _adminOptions.projectId || 'Unknown', short: true }
   ]
 
   if (options) {
     if (options.ref) {
-      fields.push({ title: 'path', value: options.ref.path })
+      firURL = makeFirestoreUrl(options.ref)
+      title = options.ref.path
     }
 
     if (options.error) {
@@ -63,6 +77,8 @@ export const send = async (message: string, options?: { ref?: FirebaseFirestore.
   }
 
   const attachments = {
+    title: title,
+    title_link: firURL,
     color: (options || {}).color,
     ts: new Date().getTime() / 1000,
     fields: fields
