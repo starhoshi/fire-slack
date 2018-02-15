@@ -1,0 +1,54 @@
+{
+  "name": "fire-slack",
+  "version": "0.0.1",
+  "description": "Easy to send a slack notification for Cloud Functions.",
+  "main": "out/fire-slack.js",
+  "types": "out/fire-slack.d.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/starhoshi/fire-slack.git"
+  },
+  "keywords": [
+    "firebase",
+    "firestore",
+    "cloudfunctions",
+    "slack"
+  ],
+  "author": "star__hoshi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/starhoshi/fire-slack/issues"
+  },
+  "homepage": "https://github.com/starhoshi/fire-slack#readme",
+  "jest": {
+    "transform": {
+      "\\.ts": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "src/test/.*.test.ts",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^22.1.2",
+    "@types/slack-node": "^0.1.2",
+    "firebase-tools": "^3.17.4",
+    "jest": "^22.2.2",
+    "rescue-fire": "^0.2.0",
+    "shana": "^0.1.0",
+    "ts-jest": "^22.0.3",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.1"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^0.11.2",
+    "firebase-admin": "^5.8.2",
+    "firebase-functions": "^0.8.1",
+    "slack-node": "^0.1.8"
+  }
+}
