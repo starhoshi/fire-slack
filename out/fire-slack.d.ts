@@ -1,14 +1,6 @@
 import * as FirebaseFirestore from '@google-cloud/firestore';
 import * as admin from 'firebase-admin';
-/**
- * Use for initializer.
- */
-export interface SlackParams {
-    url: string;
-    channel: string;
-    username?: string;
-    iconEmoji?: string;
-}
+import * as Slack from 'typed-slack';
 /**
  * Initialize fire-slack in your index.ts.
  * @param adminOptions functions.config().firebase
@@ -20,14 +12,6 @@ export declare const initialize: (adminOptions: admin.AppOptions, incomingUrl: s
     username?: string | undefined;
     iconEmoji?: string | undefined;
 } | undefined) => void;
-/**
- * attachments.fields
- */
-export interface Fields {
-    title: string;
-    value: string;
-    short?: boolean;
-}
 /**
  * Make Firestore database url
  * @param ref DocumentReference
@@ -43,6 +27,6 @@ export declare const send: (message: string, options?: {
     error?: Error | undefined;
     color?: string | undefined;
     channel?: string | undefined;
-    overrideFields?: Fields[] | undefined;
-    appendFields?: Fields[] | undefined;
+    overrideFields?: Slack.Feild[] | undefined;
+    appendFields?: Slack.Feild[] | undefined;
 } | undefined) => Promise<any>;

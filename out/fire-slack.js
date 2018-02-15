@@ -8,12 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const rp = require("request-promise");
-let _url = '';
+const Slack = require("typed-slack");
 let _channel;
 let _username;
 let _iconEmoji;
 let _adminOptions;
+let _webhook;
 /**
  * Initialize fire-slack in your index.ts.
  * @param adminOptions functions.config().firebase
@@ -22,7 +22,7 @@ let _adminOptions;
  */
 exports.initialize = (adminOptions, incomingUrl, options) => {
     _adminOptions = adminOptions;
-    _url = incomingUrl;
+    _webhook = new Slack.IncomingWebhook(process.env.SLACK_URL);
     if (options) {
         _channel = options.channel;
         _username = options.username;
@@ -47,6 +47,7 @@ exports.makeFirestoreUrl = (ref) => {
 exports.send = (message, options) => __awaiter(this, void 0, void 0, function* () {
     let color = undefined;
     let channel = _channel;
+    let iconEmoji = _iconEmoji;
     let title = undefined;
     let firURL = undefined;
     let fields = [
@@ -60,7 +61,7 @@ exports.send = (message, options) => __awaiter(this, void 0, void 0, function* (
         }
         if (options.error) {
             fields.push({ title: 'error', value: options.error.toString() });
-            color = 'danger';
+            color = Slack.Color.Danger;
         }
         if (options.color) {
             color = options.color;
@@ -82,16 +83,12 @@ exports.send = (message, options) => __awaiter(this, void 0, void 0, function* (
         ts: new Date().getTime() / 1000,
         fields: fields
     };
-    return rp({
-        method: 'POST',
-        uri: _url,
-        body: {
-            channel: channel,
-            icon_emoji: _iconEmoji,
-            username: _username || 'fire-slack',
-            text: message,
-            attachments: [attachments]
-        },
-        json: true
-    });
+    const webhookOptions = {
+        channel: channel,
+        icon_emoji: iconEmoji,
+        username: _username || 'fire-slack',
+        text: message,
+        attachments: [attachments]
+    };
+    return _webhook.send(webhookOptions);
 });
