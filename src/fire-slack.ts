@@ -2,6 +2,9 @@ import * as FirebaseFirestore from '@google-cloud/firestore'
 import * as rp from 'request-promise'
 import * as admin from 'firebase-admin'
 
+/**
+ * Use for initializer.
+ */
 export interface SlackParams {
   url: string
   channel: string
@@ -15,6 +18,12 @@ let _username: string | undefined
 let _iconEmoji: string | undefined
 let _adminOptions: admin.AppOptions
 
+/**
+ * Initialize fire-slack in your index.ts.
+ * @param adminOptions functions.config().firebase
+ * @param incomingUrl Incoming webhooks url
+ * @param options options
+ */
 export const initialize = (adminOptions: admin.AppOptions, incomingUrl: string, options?: { channel?: string, username?: string, iconEmoji?: string }) => {
   _adminOptions = adminOptions
   _url = incomingUrl
@@ -25,14 +34,19 @@ export const initialize = (adminOptions: admin.AppOptions, incomingUrl: string, 
   }
 }
 
+/**
+ * attachments.fields
+ */
 export interface Fields {
   title: string
   value: string
   short?: boolean
-  title_link?: string
-  color?: string
 }
 
+/**
+ * Make Firestore database url
+ * @param ref DocumentReference
+ */
 export const makeFirestoreUrl = (ref: FirebaseFirestore.DocumentReference) => {
  let databaseURL = 'https://console.firebase.google.com/u/0/project/'
   databaseURL +=  (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F'
@@ -41,6 +55,11 @@ export const makeFirestoreUrl = (ref: FirebaseFirestore.DocumentReference) => {
   return databaseURL + path
 }
 
+/**
+ * send to slack
+ * @param message slack message
+ * @param options options
+ */
 export const send = async (message: string, options?: { ref?: FirebaseFirestore.DocumentReference, error?: Error, color?: string, channel?: string, overrideFields?: Fields[], appendFields?: Fields[] }) => {
   let color: string | undefined = undefined
   let channel: string | undefined = _channel
