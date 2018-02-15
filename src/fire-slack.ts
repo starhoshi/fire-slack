@@ -70,6 +70,8 @@ export const send = async (message: string, options?: { ref?: FirebaseFirestore.
   ]
 
   if (options) {
+    color = options.color
+
     if (options.ref) {
       firURL = makeFirestoreUrl(options.ref)
       title = options.ref.path
@@ -98,7 +100,7 @@ export const send = async (message: string, options?: { ref?: FirebaseFirestore.
   const attachments = {
     title: title,
     title_link: firURL,
-    color: (options || {}).color,
+    color: color,
     ts: new Date().getTime() / 1000,
     fields: fields
   }

@@ -53,6 +53,7 @@ exports.send = (message, options) => __awaiter(this, void 0, void 0, function* (
         { title: 'project_id', value: _adminOptions.projectId || 'Unknown', short: true }
     ];
     if (options) {
+        color = options.color;
         if (options.ref) {
             firURL = exports.makeFirestoreUrl(options.ref);
             title = options.ref.path;
@@ -77,7 +78,7 @@ exports.send = (message, options) => __awaiter(this, void 0, void 0, function* (
     const attachments = {
         title: title,
         title_link: firURL,
-        color: (options || {}).color,
+        color: color,
         ts: new Date().getTime() / 1000,
         fields: fields
     };
