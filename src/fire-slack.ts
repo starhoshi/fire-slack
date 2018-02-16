@@ -55,6 +55,8 @@ export interface SendOptions {
  * If you add error to options, automatically append error field.
  * If you add ref to options, automatically append path field and title path.
  * Even if you specify a title, ref will override it, so be careful.
+ *
+ * If you want to specify parameters more flexibly, please use [typed\-slack](https://github.com/starhoshi/typed-slack) directly.
  * @param options send options
  */
 export const send = async (options: SendOptions) => {
