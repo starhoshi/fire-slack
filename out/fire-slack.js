@@ -18,15 +18,15 @@ let _webhook;
  * Initialize fire-slack in your index.ts.
  * @param adminOptions functions.config().firebase
  * @param incomingUrl Incoming webhooks url
- * @param options options
+ * @param defaultOptions defaultOptions
  */
-exports.initialize = (adminOptions, incomingUrl, options) => {
+exports.initialize = (adminOptions, incomingUrl, defaultOptions) => {
     _adminOptions = adminOptions;
     _webhook = new Slack.IncomingWebhook(process.env.SLACK_URL);
-    if (options) {
-        _channel = options.channel;
-        _username = options.username;
-        _iconEmoji = options.iconEmoji;
+    if (defaultOptions) {
+        _channel = defaultOptions.channel;
+        _username = defaultOptions.username;
+        _iconEmoji = defaultOptions.iconEmoji;
     }
 };
 /**
@@ -40,54 +40,32 @@ exports.makeFirestoreUrl = (ref) => {
     return databaseURL + path;
 };
 /**
- * send to slack
- * @param message slack message
- * @param options options
+ * Send to slack.
+ * If you add error to options, automatically append error field.
+ * If you add ref to options, automatically append path field and title path.
+ * Even if you specify a title, ref will override it, so be careful.
+ * @param options send options
  */
-exports.send = (message, options) => __awaiter(this, void 0, void 0, function* () {
-    let color = undefined;
-    let channel = _channel;
-    let iconEmoji = _iconEmoji;
-    let title = undefined;
-    let firURL = undefined;
-    let fields = [
-        { title: 'project_id', value: _adminOptions.projectId || 'Unknown', short: true }
-    ];
+exports.send = (options) => __awaiter(this, void 0, void 0, function* () {
+    const webhookOptions = options.webhook;
+    webhookOptions.channel = webhookOptions.channel || _channel;
+    webhookOptions.icon_emoji = webhookOptions.icon_emoji || _iconEmoji;
+    webhookOptions.username = webhookOptions.username || _username || 'fire-slack';
+    if (!webhookOptions.attachments || webhookOptions.attachments.length === 0) {
+        webhookOptions.attachments = [{}];
+    }
+    webhookOptions.attachments[0].ts = webhookOptions.attachments[0].ts || new Date().getTime() / 1000;
+    webhookOptions.attachments[0].fields = webhookOptions.attachments[0].fields || [];
+    webhookOptions.attachments[0].fields.push({ title: 'project_id', value: _adminOptions.projectId || 'Unknown', short: true });
     if (options) {
         if (options.ref) {
-            firURL = exports.makeFirestoreUrl(options.ref);
-            title = options.ref.path;
+            webhookOptions.attachments[0].title = options.ref.path;
+            webhookOptions.attachments[0].title_link = exports.makeFirestoreUrl(options.ref);
         }
         if (options.error) {
-            fields.push({ title: 'error', value: options.error.toString() });
-            color = Slack.Color.Danger;
-        }
-        if (options.color) {
-            color = options.color;
-        }
-        if (options.overrideFields) {
-            fields = options.overrideFields;
-        }
-        else if (options.appendFields) {
-            fields.concat(options.appendFields);
-        }
-        if (options.channel) {
-            channel = options.channel;
+            webhookOptions.attachments[0].fields.push({ title: 'error', value: options.error.toString() });
+            webhookOptions.attachments[0].color = webhookOptions.attachments[0].color || Slack.Color.Danger;
         }
     }
-    const attachments = {
-        title: title,
-        title_link: firURL,
-        color: color,
-        ts: new Date().getTime() / 1000,
-        fields: fields
-    };
-    const webhookOptions = {
-        channel: channel,
-        icon_emoji: iconEmoji,
-        username: _username || 'fire-slack',
-        text: message,
-        attachments: [attachments]
-    };
     return _webhook.send(webhookOptions);
 });

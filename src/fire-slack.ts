@@ -12,15 +12,15 @@ let _webhook: Slack.IncomingWebhook
  * Initialize fire-slack in your index.ts.
  * @param adminOptions functions.config().firebase
  * @param incomingUrl Incoming webhooks url
- * @param options options
+ * @param defaultOptions defaultOptions
  */
-export const initialize = (adminOptions: admin.AppOptions, incomingUrl: string, options?: { channel?: string, username?: string, iconEmoji?: string }) => {
+export const initialize = (adminOptions: admin.AppOptions, incomingUrl: string, defaultOptions?: { channel?: string, username?: string, iconEmoji?: string }) => {
   _adminOptions = adminOptions
   _webhook = new Slack.IncomingWebhook(process.env.SLACK_URL as string)
-  if (options) {
-    _channel = options.channel
-    _username = options.username
-    _iconEmoji = options.iconEmoji
+  if (defaultOptions) {
+    _channel = defaultOptions.channel
+    _username = defaultOptions.username
+    _iconEmoji = defaultOptions.iconEmoji
   }
 }
 /**
@@ -35,61 +35,52 @@ export const makeFirestoreUrl = (ref: FirebaseFirestore.DocumentReference) => {
   return databaseURL + path
 }
 
+export interface SendOptions {
+  /**
+   * IncomingWebhookOptions
+   */
+  webhook: Slack.IncomingWebhookOptions
+  /**
+   * DocumentReference
+   */
+  ref?: FirebaseFirestore.DocumentReference
+  /**
+   * Set error if you want to send an error.
+   */
+  error?: Error
+}
+
 /**
- * send to slack
- * @param message slack message
- * @param options options
+ * Send to slack.
+ * If you add error to options, automatically append error field.
+ * If you add ref to options, automatically append path field and title path.
+ * Even if you specify a title, ref will override it, so be careful.
+ * @param options send options
  */
-export const send = async (message: string, options?: { ref?: FirebaseFirestore.DocumentReference, error?: Error, color?: string, channel?: string, overrideFields?: Slack.Feild[], appendFields?: Slack.Feild[] }) => {
-  let color: string | undefined = undefined
-  let channel: string | undefined = _channel
-  let iconEmoji: string | undefined = _iconEmoji
-  let title: string | undefined = undefined
-  let firURL: string | undefined = undefined
-  let fields: Slack.Feild[] = [
+export const send = async (options: SendOptions) => {
+  const webhookOptions = options.webhook
+  webhookOptions.channel = webhookOptions.channel || _channel
+  webhookOptions.icon_emoji = webhookOptions.icon_emoji || _iconEmoji
+  webhookOptions.username = webhookOptions.username || _username || 'fire-slack'
+  if (!webhookOptions.attachments || webhookOptions.attachments.length === 0) {
+    webhookOptions.attachments = [{}]
+  }
+  webhookOptions.attachments[0].ts = webhookOptions.attachments[0].ts || new Date().getTime() / 1000
+  webhookOptions.attachments[0].fields = webhookOptions.attachments[0].fields || []
+  webhookOptions.attachments[0].fields!.push(
     { title: 'project_id', value: _adminOptions.projectId || 'Unknown', short: true }
-  ]
+  )
 
   if (options) {
     if (options.ref) {
-      firURL = makeFirestoreUrl(options.ref)
-      title = options.ref.path
+      webhookOptions.attachments[0].title = options.ref.path
+      webhookOptions.attachments[0].title_link = makeFirestoreUrl(options.ref)
     }
 
     if (options.error) {
-      fields.push({ title: 'error', value: options.error.toString() })
-      color = Slack.Color.Danger
+      webhookOptions.attachments[0].fields!.push({ title: 'error', value: options.error.toString() })
+      webhookOptions.attachments[0].color = webhookOptions.attachments[0].color || Slack.Color.Danger
     }
-
-    if (options.color) {
-      color = options.color
-    }
-
-    if (options.overrideFields) {
-      fields = options.overrideFields
-    } else if (options.appendFields) {
-      fields.concat(options.appendFields)
-    }
-
-    if (options.channel) {
-      channel = options.channel
-    }
-  }
-
-  const attachments = <Slack.Attachment>{
-    title: title,
-    title_link: firURL,
-    color: color,
-    ts: new Date().getTime() / 1000,
-    fields: fields
-  }
-
-  const webhookOptions = <Slack.IncomingWebhookOptions>{
-    channel: channel,
-    icon_emoji: iconEmoji,
-    username: _username || 'fire-slack',
-    text: message,
-    attachments: [attachments]
   }
 
   return _webhook.send(webhookOptions)

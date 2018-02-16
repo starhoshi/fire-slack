@@ -5,9 +5,9 @@ import * as Slack from 'typed-slack';
  * Initialize fire-slack in your index.ts.
  * @param adminOptions functions.config().firebase
  * @param incomingUrl Incoming webhooks url
- * @param options options
+ * @param defaultOptions defaultOptions
  */
-export declare const initialize: (adminOptions: admin.AppOptions, incomingUrl: string, options?: {
+export declare const initialize: (adminOptions: admin.AppOptions, incomingUrl: string, defaultOptions?: {
     channel?: string | undefined;
     username?: string | undefined;
     iconEmoji?: string | undefined;
@@ -17,16 +17,25 @@ export declare const initialize: (adminOptions: admin.AppOptions, incomingUrl: s
  * @param ref DocumentReference
  */
 export declare const makeFirestoreUrl: (ref: FirebaseFirestore.DocumentReference) => string;
+export interface SendOptions {
+    /**
+     * IncomingWebhookOptions
+     */
+    webhook: Slack.IncomingWebhookOptions;
+    /**
+     * DocumentReference
+     */
+    ref?: FirebaseFirestore.DocumentReference;
+    /**
+     * Set error if you want to send an error.
+     */
+    error?: Error;
+}
 /**
- * send to slack
- * @param message slack message
- * @param options options
+ * Send to slack.
+ * If you add error to options, automatically append error field.
+ * If you add ref to options, automatically append path field and title path.
+ * Even if you specify a title, ref will override it, so be careful.
+ * @param options send options
  */
-export declare const send: (message: string, options?: {
-    ref?: FirebaseFirestore.DocumentReference | undefined;
-    error?: Error | undefined;
-    color?: string | undefined;
-    channel?: string | undefined;
-    overrideFields?: Slack.Feild[] | undefined;
-    appendFields?: Slack.Feild[] | undefined;
-} | undefined) => Promise<any>;
+export declare const send: (options: SendOptions) => Promise<any>;
