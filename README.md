@@ -6,11 +6,16 @@
 
 fire-slack is a library that makes it easy and convenient to send Slack's Incoming Webhook from Cloud Functions.
 
-The feature is below.
+## Feature
 
 * Automatically add `project_id`.
 * Add a link url to firebase's database. (optional)
 * Add a error message and change it to red color. (optional)
+
+Like this gif, firebase's database can be opened.
+
+<img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/docs/sample.gif" width='60%' />
+
 
 ## Installation
 
@@ -30,14 +35,15 @@ import * as Slack from 'fire-slack'
 Slack.initialize(
     <admin.AppOptions>functions.config().firebase,
     'https://your-incoming-webhook-url',
-    // optional
-    { channel: 'default_channel', iconEmoji: ':default_icon_emoji:', username: 'default_username' } 
+    { channel: 'default_channel', iconEmoji: ':default:', username: 'default_usern' } // optional
 )
 ```
 
 ### 2. Send to slack
 
 For example, when an error occurs on Cloud Functions.
+
+`webhook` options are the same as options in Incoming webhook. See [Incoming Webhooks \| Slack](https://api.slack.com/incoming-webhooks) or [typed\-slack\.d\.ts](https://github.com/starhoshi/typed-slack/blob/master/out/typed-slack.d.ts).
 
 ```ts
 export const orderPaymentRequested = functions.firestore
@@ -53,6 +59,6 @@ export const orderPaymentRequested = functions.firestore
 })
 ```
 
-send's webhook options are the same as options in Incoming webhook.
-See [Incoming Webhooks \| Slack](https://api.slack.com/incoming-webhooks) or [typed\-slack\.d\.ts](https://github.com/starhoshi/typed-slack/blob/master/out/typed-slack.d.ts).
+result:
 
+<img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/docs/screenshot.png" width='40%' />
