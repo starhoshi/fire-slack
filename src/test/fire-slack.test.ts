@@ -4,7 +4,7 @@ import 'jest'
 
 jest.setTimeout(20000)
 
-const adminOptions = <admin.AppOptions> {
+const adminOptions = <admin.AppOptions>{
   databaseURL: 'https://sandbox-329fc.firebaseio.com',
   storageBucket: 'sandbox-329fc.appspot.com',
   apiKey: '',
@@ -24,16 +24,16 @@ beforeAll(() => {
 let user: FirebaseFirestore.DocumentReference
 const id = 'test'
 
-describe('exist options', () => {
+describe.only('exist options', () => {
   test('notification', async () => {
-    const s = await Slack.send({ webhook: { text: 'hoge', attachments: [] }, ref: {path: 'version/1/sampleorder/3dxBtsj6d5nLujOuGu2L' } as any, error: Error('test') })
+    const s = await Slack.send({ webhook: { text: 'An error occurred!', attachments: [{ fields: [{ title: 'custom fields', value: 'custom message', short: true }] }] }, ref: { path: 'version/1/sampleorder/3dxBtsj6d5nLujOuGu2L' } as any, error: Error('Invalid Request') })
     expect(s).toBe('ok')
   })
 })
 
 describe('exist options', () => {
   test('notification', async () => {
-    const s = await Slack.send({ webhook: { text: 'hoge', attachments: [{}] }, ref: {path: 'version/1/sampleorder/3dxBtsj6d5nLujOuGu2L' } as any })
+    const s = await Slack.send({ webhook: { text: 'hoge', attachments: [{}] }, ref: { path: 'version/1/sampleorder/3dxBtsj6d5nLujOuGu2L' } as any })
     expect(s).toBe('ok')
   })
 })
