@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/docs/logo.png" width='200px' />
+    <img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/assets/logo.png" width='200px' />
 </p>
 
 # fire-slack [![npm version](https://badge.fury.io/js/fire-slack.svg)](https://badge.fury.io/js/fire-slack) [![Build Status](https://travis-ci.org/starhoshi/fire-slack.svg?branch=master)](https://travis-ci.org/starhoshi/fire-slack) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/18e7eb400ff544fb89a174782d60c531)](https://www.codacy.com/app/kensuke1751/fire-slack?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=starhoshi/fire-slack&amp;utm_campaign=Badge_Grade) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -14,7 +14,7 @@ fire-slack is a library that makes it easy and convenient to send Slack's Incomi
 
 Like this gif, firebase's database can be opened.
 
-<img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/docs/sample.gif" width='60%' />
+<img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/assets/sample.gif" width='60%' />
 
 
 ## Installation
@@ -61,4 +61,4 @@ export const orderPaymentRequested = functions.firestore
 
 result:
 
-<img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/docs/screenshot.png" width='40%' />
+<img src="https://raw.githubusercontent.com/starhoshi/fire-slack/master/assets/screenshot.png" width='40%' />
