@@ -22,7 +22,7 @@ let _webhook;
  */
 exports.initialize = (adminOptions, incomingUrl, defaultOptions) => {
     _adminOptions = adminOptions;
-    _webhook = new Slack.IncomingWebhook(process.env.SLACK_URL);
+    _webhook = new Slack.IncomingWebhook(incomingUrl);
     if (defaultOptions) {
         _channel = defaultOptions.channel;
         _username = defaultOptions.username;

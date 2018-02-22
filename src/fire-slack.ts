@@ -16,7 +16,7 @@ let _webhook: Slack.IncomingWebhook
  */
 export const initialize = (adminOptions: admin.AppOptions, incomingUrl: string, defaultOptions?: { channel?: string, username?: string, iconEmoji?: string }) => {
   _adminOptions = adminOptions
-  _webhook = new Slack.IncomingWebhook(process.env.SLACK_URL as string)
+  _webhook = new Slack.IncomingWebhook(incomingUrl)
   if (defaultOptions) {
     _channel = defaultOptions.channel
     _username = defaultOptions.username
