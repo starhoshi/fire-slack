@@ -1,5 +1,4 @@
 import * as FirebaseFirestore from '@google-cloud/firestore';
-import * as admin from 'firebase-admin';
 import * as Slack from 'typed-slack';
 /**
  * Initialize fire-slack in your index.ts.
@@ -7,7 +6,7 @@ import * as Slack from 'typed-slack';
  * @param incomingUrl Incoming webhooks url
  * @param defaultOptions defaultOptions
  */
-export declare const initialize: (adminOptions: admin.AppOptions, incomingUrl: string, defaultOptions?: {
+export declare const initialize: (adminOptions: any, incomingUrl: string, defaultOptions?: {
     channel?: string | undefined;
     username?: string | undefined;
     iconEmoji?: string | undefined;

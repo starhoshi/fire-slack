@@ -1,10 +1,9 @@
-import * as admin from 'firebase-admin'
 import * as Slack from '../fire-slack'
 import 'jest'
 
 jest.setTimeout(20000)
 
-const adminOptions = <admin.AppOptions>{
+const adminOptions = {
   databaseURL: 'https://sandbox-329fc.firebaseio.com',
   storageBucket: 'sandbox-329fc.appspot.com',
   apiKey: '',

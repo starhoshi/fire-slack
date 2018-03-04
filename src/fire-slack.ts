@@ -1,11 +1,10 @@
 import * as FirebaseFirestore from '@google-cloud/firestore'
-import * as admin from 'firebase-admin'
 import * as Slack from 'typed-slack'
 
 let _channel: string | undefined
 let _username: string | undefined
 let _iconEmoji: string | undefined
-let _adminOptions: admin.AppOptions
+let _adminOptions: any
 let _webhook: Slack.IncomingWebhook
 
 /**
@@ -14,7 +13,7 @@ let _webhook: Slack.IncomingWebhook
  * @param incomingUrl Incoming webhooks url
  * @param defaultOptions defaultOptions
  */
-export const initialize = (adminOptions: admin.AppOptions, incomingUrl: string, defaultOptions?: { channel?: string, username?: string, iconEmoji?: string }) => {
+export const initialize = (adminOptions: any, incomingUrl: string, defaultOptions?: { channel?: string, username?: string, iconEmoji?: string }) => {
   _adminOptions = adminOptions
   _webhook = new Slack.IncomingWebhook(incomingUrl)
   if (defaultOptions) {
