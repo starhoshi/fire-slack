@@ -96,7 +96,7 @@ export const send = async (options: SendOptions) => {
     }
 
     webhookOptions.attachments[0].fields!.push(
-      { title: 'Function Name', value: functionName, short: true }
+      { title: 'Function Name', value: value, short: true }
     )
 
     let message = `<${makeFunctionsLogURL(functionName)}|See ${functionName} logs in Firebase.>`
