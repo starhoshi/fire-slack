@@ -15,7 +15,15 @@ export declare const initialize: (adminOptions: any, incomingUrl: string, defaul
  * Make Firestore database url
  * @param ref DocumentReference
  */
-export declare const makeFirestoreUrl: (ref: FirebaseFirestore.DocumentReference) => string;
+export declare const makeFirestoreURL: (ref: FirebaseFirestore.DocumentReference) => string;
+/**
+ * Make Cloud Functions log url
+ */
+export declare const makeFunctionsLogURL: (functionName: string) => string;
+/**
+ * Make Stackdriver log url
+ */
+export declare const makeStackdriverURL: (functionName: string) => string;
 export interface SendOptions {
     /**
      * IncomingWebhookOptions

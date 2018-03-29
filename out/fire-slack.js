@@ -29,15 +29,30 @@ exports.initialize = (adminOptions, incomingUrl, defaultOptions) => {
         _iconEmoji = defaultOptions.iconEmoji;
     }
 };
+const baseURL = 'https://console.firebase.google.com/u/0/project/';
 /**
  * Make Firestore database url
  * @param ref DocumentReference
  */
-exports.makeFirestoreUrl = (ref) => {
-    let databaseURL = 'https://console.firebase.google.com/u/0/project/';
-    databaseURL += (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F';
+exports.makeFirestoreURL = (ref) => {
+    const databaseURL = baseURL + (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F';
     const path = ref.path.replace(/\//g, '~2F');
     return databaseURL + path;
+};
+/**
+ * Make Cloud Functions log url
+ */
+exports.makeFunctionsLogURL = (functionName) => {
+    const url = baseURL + (_adminOptions.projectId || '/projectId') + '/functions/logs';
+    return `${url}?search=${functionName}`;
+};
+/**
+ * Make Stackdriver log url
+ */
+exports.makeStackdriverURL = (functionName) => {
+    let stackdriver = `https://console.cloud.google.com/logs/viewer?project=${_adminOptions.projectId}`;
+    stackdriver += `&advancedFilter=resource.type%3D"cloud_function"%0Aresource.labels.function_name%3D"${functionName}"`;
+    return stackdriver;
 };
 /**
  * Send to slack.
@@ -58,11 +73,27 @@ exports.send = (options) => __awaiter(this, void 0, void 0, function* () {
     }
     webhookOptions.attachments[0].ts = webhookOptions.attachments[0].ts || new Date().getTime() / 1000;
     webhookOptions.attachments[0].fields = webhookOptions.attachments[0].fields || [];
-    webhookOptions.attachments[0].fields.push({ title: 'project_id', value: _adminOptions.projectId || 'Unknown', short: true });
+    if (global.process.env.FUNCTION_NAME) {
+        const functionName = global.process.env.FUNCTION_NAME;
+        let value = global.process.env.FUNCTION_NAME;
+        if (global.process.env.FUNCTION_MEMORY_MB) {
+            value += ` (${global.process.env.FUNCTION_MEMORY_MB} MB)`;
+        }
+        webhookOptions.attachments[0].fields.push({ title: 'Function Name', value: functionName, short: true });
+        let message = `<${exports.makeFunctionsLogURL(functionName)}|See ${functionName} logs in Firebase.>`;
+        message += ` or <${exports.makeStackdriverURL(functionName)}|See ${functionName} logs in Stackdriver.>`;
+        if (webhookOptions.text) {
+            webhookOptions.text += `\n${message}`;
+        }
+        else {
+            webhookOptions.text = message;
+        }
+    }
+    webhookOptions.attachments[0].fields.push({ title: 'Project ID', value: _adminOptions.projectId || 'Unknown', short: true });
     if (options) {
         if (options.ref) {
             webhookOptions.attachments[0].title = options.ref.path;
-            webhookOptions.attachments[0].title_link = exports.makeFirestoreUrl(options.ref);
+            webhookOptions.attachments[0].title_link = exports.makeFirestoreURL(options.ref);
         }
         if (options.error) {
             webhookOptions.attachments[0].fields.push({ title: 'error', value: options.error.toString() });

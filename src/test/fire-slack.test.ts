@@ -18,6 +18,8 @@ beforeAll(() => {
       channel: 'debug'
     }
   )
+  global.process.env.FUNCTION_NAME = 'payOrder'
+  global.process.env.FUNCTION_MEMORY_MB = '256'
 })
 
 let user: FirebaseFirestore.DocumentReference
@@ -25,7 +27,7 @@ const id = 'test'
 
 describe('exist options', () => {
   test('notification', async () => {
-    const s = await Slack.send({ webhook: { text: 'An error occurred!', attachments: [{ fields: [{ title: 'custom fields', value: 'custom message', short: true }] }] }, ref: { path: 'version/1/sampleorder/3dxBtsj6d5nLujOuGu2L' } as any, error: Error('Invalid Request') })
+    const s = await Slack.send({ webhook: { attachments: [{ fields: [{ title: 'custom fields', value: 'custom message', short: true }] }] }, ref: { path: 'version/1/sampleorder/3dxBtsj6d5nLujOuGu2L' } as any, error: Error('Invalid Request') })
     expect(s).toBe('ok')
   })
 })

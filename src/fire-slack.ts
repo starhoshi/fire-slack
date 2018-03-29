@@ -22,16 +22,35 @@ export const initialize = (adminOptions: any, incomingUrl: string, defaultOption
     _iconEmoji = defaultOptions.iconEmoji
   }
 }
+
+const baseURL = 'https://console.firebase.google.com/u/0/project/'
+
 /**
  * Make Firestore database url
  * @param ref DocumentReference
  */
-export const makeFirestoreUrl = (ref: FirebaseFirestore.DocumentReference) => {
-  let databaseURL = 'https://console.firebase.google.com/u/0/project/'
-  databaseURL += (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F'
+export const makeFirestoreURL = (ref: FirebaseFirestore.DocumentReference) => {
+  const databaseURL = baseURL + (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F'
   const path = ref.path.replace(/\//g, '~2F')
 
   return databaseURL + path
+}
+
+/**
+ * Make Cloud Functions log url
+ */
+export const makeFunctionsLogURL = (functionName: string) => {
+  const url = baseURL + (_adminOptions.projectId || '/projectId') + '/functions/logs'
+  return `${url}?search=${functionName}`
+}
+
+/**
+ * Make Stackdriver log url
+ */
+export const makeStackdriverURL = (functionName: string) => {
+  let stackdriver = `https://console.cloud.google.com/logs/viewer?project=${_adminOptions.projectId}`
+  stackdriver += `&advancedFilter=resource.type%3D"cloud_function"%0Aresource.labels.function_name%3D"${functionName}"`
+  return stackdriver
 }
 
 export interface SendOptions {
@@ -68,14 +87,35 @@ export const send = async (options: SendOptions) => {
   }
   webhookOptions.attachments[0].ts = webhookOptions.attachments[0].ts || new Date().getTime() / 1000
   webhookOptions.attachments[0].fields = webhookOptions.attachments[0].fields || []
+
+  if (global.process.env.FUNCTION_NAME) {
+    const functionName = global.process.env.FUNCTION_NAME
+    let value = global.process.env.FUNCTION_NAME
+    if (global.process.env.FUNCTION_MEMORY_MB) {
+      value += ` (${global.process.env.FUNCTION_MEMORY_MB} MB)`
+    }
+
+    webhookOptions.attachments[0].fields!.push(
+      { title: 'Function Name', value: functionName, short: true }
+    )
+
+    let message = `<${makeFunctionsLogURL(functionName)}|See ${functionName} logs in Firebase.>`
+    message += ` or <${makeStackdriverURL(functionName)}|See ${functionName} logs in Stackdriver.>`
+    if (webhookOptions.text) {
+      webhookOptions.text += `\n${message}`
+    } else {
+      webhookOptions.text = message
+    }
+  }
+
   webhookOptions.attachments[0].fields!.push(
-    { title: 'project_id', value: _adminOptions.projectId || 'Unknown', short: true }
+    { title: 'Project ID', value: _adminOptions.projectId || 'Unknown', short: true }
   )
 
   if (options) {
     if (options.ref) {
       webhookOptions.attachments[0].title = options.ref.path
-      webhookOptions.attachments[0].title_link = makeFirestoreUrl(options.ref)
+      webhookOptions.attachments[0].title_link = makeFirestoreURL(options.ref)
     }
 
     if (options.error) {
