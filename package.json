@@ -1,6 +1,6 @@
 {
   "name": "fire-slack",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Easy to send a slack notification for Cloud Functions.",
   "main": "out/fire-slack.js",
   "types": "out/fire-slack.d.ts",
