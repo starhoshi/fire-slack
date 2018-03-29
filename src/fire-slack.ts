@@ -119,7 +119,7 @@ export const send = async (options: SendOptions) => {
     }
 
     if (options.error) {
-      webhookOptions.attachments[0].fields!.push({ title: 'error', value: options.error.toString() })
+      webhookOptions.attachments[0].fields!.push({ title: 'Error', value: options.error.toString() })
       webhookOptions.attachments[0].color = webhookOptions.attachments[0].color || Slack.Color.Danger
     }
   }

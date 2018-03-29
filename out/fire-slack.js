@@ -96,7 +96,7 @@ exports.send = (options) => __awaiter(this, void 0, void 0, function* () {
             webhookOptions.attachments[0].title_link = exports.makeFirestoreURL(options.ref);
         }
         if (options.error) {
-            webhookOptions.attachments[0].fields.push({ title: 'error', value: options.error.toString() });
+            webhookOptions.attachments[0].fields.push({ title: 'Error', value: options.error.toString() });
             webhookOptions.attachments[0].color = webhookOptions.attachments[0].color || Slack.Color.Danger;
         }
     }
