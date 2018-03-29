@@ -80,8 +80,9 @@ exports.send = (options) => __awaiter(this, void 0, void 0, function* () {
             value += ` (${global.process.env.FUNCTION_MEMORY_MB} MB)`;
         }
         webhookOptions.attachments[0].fields.push({ title: 'Function Name', value: value, short: true });
-        let message = `<${exports.makeFunctionsLogURL(functionName)}|See ${functionName} logs in Firebase.>`;
-        message += ` or <${exports.makeStackdriverURL(functionName)}|See ${functionName} logs in Stackdriver.>`;
+        let message = `You can refer to the \`${functionName}\`'s logs in`;
+        message += ` <${exports.makeFunctionsLogURL(functionName)}|Firebase>`;
+        message += ` or <${exports.makeStackdriverURL(functionName)}|Stackdriver.>`;
         if (webhookOptions.text) {
             webhookOptions.text += `\n${message}`;
         }

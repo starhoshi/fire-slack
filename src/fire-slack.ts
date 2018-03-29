@@ -99,8 +99,9 @@ export const send = async (options: SendOptions) => {
       { title: 'Function Name', value: value, short: true }
     )
 
-    let message = `<${makeFunctionsLogURL(functionName)}|See ${functionName} logs in Firebase.>`
-    message += ` or <${makeStackdriverURL(functionName)}|See ${functionName} logs in Stackdriver.>`
+    let message = `You can refer to the \`${functionName}\`'s logs in`
+    message += ` <${makeFunctionsLogURL(functionName)}|Firebase>`
+    message += ` or <${makeStackdriverURL(functionName)}|Stackdriver.>`
     if (webhookOptions.text) {
       webhookOptions.text += `\n${message}`
     } else {
