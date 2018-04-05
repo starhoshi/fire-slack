@@ -6,7 +6,7 @@ import * as Slack from 'typed-slack';
  * @param incomingUrl Incoming webhooks url
  * @param defaultOptions defaultOptions
  */
-export declare const initialize: (adminOptions: any, incomingUrl: string, defaultOptions?: {
+export declare const initialize: (incomingUrl: string, defaultOptions?: {
     channel?: string | undefined;
     username?: string | undefined;
     iconEmoji?: string | undefined;

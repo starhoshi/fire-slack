@@ -12,7 +12,7 @@ const Slack = require("typed-slack");
 let _channel;
 let _username;
 let _iconEmoji;
-let _adminOptions;
+let _firebaseConfig;
 let _webhook;
 /**
  * Initialize fire-slack in your index.ts.
@@ -20,8 +20,8 @@ let _webhook;
  * @param incomingUrl Incoming webhooks url
  * @param defaultOptions defaultOptions
  */
-exports.initialize = (adminOptions, incomingUrl, defaultOptions) => {
-    _adminOptions = adminOptions;
+exports.initialize = (incomingUrl, defaultOptions) => {
+    _firebaseConfig = JSON.parse(global.process.env.FIREBASE_CONFIG);
     _webhook = new Slack.IncomingWebhook(incomingUrl);
     if (defaultOptions) {
         _channel = defaultOptions.channel;
@@ -35,7 +35,7 @@ const baseURL = 'https://console.firebase.google.com/u/0/project/';
  * @param ref DocumentReference
  */
 exports.makeFirestoreURL = (ref) => {
-    const databaseURL = baseURL + (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F';
+    const databaseURL = baseURL + (_firebaseConfig.projectId || '/projectId') + '/database/firestore/data~2F';
     const path = ref.path.replace(/\//g, '~2F');
     return databaseURL + path;
 };
@@ -43,14 +43,14 @@ exports.makeFirestoreURL = (ref) => {
  * Make Cloud Functions log url
  */
 exports.makeFunctionsLogURL = (functionName) => {
-    const url = baseURL + (_adminOptions.projectId || '/projectId') + '/functions/logs';
+    const url = baseURL + (_firebaseConfig.projectId || '/projectId') + '/functions/logs';
     return `${url}?search=${functionName}`;
 };
 /**
  * Make Stackdriver log url
  */
 exports.makeStackdriverURL = (functionName) => {
-    let stackdriver = `https://console.cloud.google.com/logs/viewer?project=${_adminOptions.projectId}`;
+    let stackdriver = `https://console.cloud.google.com/logs/viewer?project=${_firebaseConfig.projectId}`;
     stackdriver += `&advancedFilter=resource.type%3D"cloud_function"%0Aresource.labels.function_name%3D"${functionName}"`;
     return stackdriver;
 };
@@ -90,7 +90,7 @@ exports.send = (options) => __awaiter(this, void 0, void 0, function* () {
             webhookOptions.text = message;
         }
     }
-    webhookOptions.attachments[0].fields.push({ title: 'Project ID', value: _adminOptions.projectId || 'Unknown', short: true });
+    webhookOptions.attachments[0].fields.push({ title: 'Project ID', value: _firebaseConfig.projectId || 'Unknown', short: true });
     if (options) {
         if (options.ref) {
             webhookOptions.attachments[0].title = options.ref.path;

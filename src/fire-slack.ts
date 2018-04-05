@@ -4,7 +4,7 @@ import * as Slack from 'typed-slack'
 let _channel: string | undefined
 let _username: string | undefined
 let _iconEmoji: string | undefined
-let _adminOptions: any
+let _firebaseConfig: { [id: string]: string }
 let _webhook: Slack.IncomingWebhook
 
 /**
@@ -13,8 +13,8 @@ let _webhook: Slack.IncomingWebhook
  * @param incomingUrl Incoming webhooks url
  * @param defaultOptions defaultOptions
  */
-export const initialize = (adminOptions: any, incomingUrl: string, defaultOptions?: { channel?: string, username?: string, iconEmoji?: string }) => {
-  _adminOptions = adminOptions
+export const initialize = (incomingUrl: string, defaultOptions?: { channel?: string, username?: string, iconEmoji?: string }) => {
+  _firebaseConfig = JSON.parse(global.process.env.FIREBASE_CONFIG as string)
   _webhook = new Slack.IncomingWebhook(incomingUrl)
   if (defaultOptions) {
     _channel = defaultOptions.channel
@@ -30,7 +30,7 @@ const baseURL = 'https://console.firebase.google.com/u/0/project/'
  * @param ref DocumentReference
  */
 export const makeFirestoreURL = (ref: FirebaseFirestore.DocumentReference) => {
-  const databaseURL = baseURL + (_adminOptions.projectId || '/projectId') + '/database/firestore/data~2F'
+  const databaseURL = baseURL + (_firebaseConfig.projectId || '/projectId') + '/database/firestore/data~2F'
   const path = ref.path.replace(/\//g, '~2F')
 
   return databaseURL + path
@@ -40,7 +40,7 @@ export const makeFirestoreURL = (ref: FirebaseFirestore.DocumentReference) => {
  * Make Cloud Functions log url
  */
 export const makeFunctionsLogURL = (functionName: string) => {
-  const url = baseURL + (_adminOptions.projectId || '/projectId') + '/functions/logs'
+  const url = baseURL + (_firebaseConfig.projectId || '/projectId') + '/functions/logs'
   return `${url}?search=${functionName}`
 }
 
@@ -48,7 +48,7 @@ export const makeFunctionsLogURL = (functionName: string) => {
  * Make Stackdriver log url
  */
 export const makeStackdriverURL = (functionName: string) => {
-  let stackdriver = `https://console.cloud.google.com/logs/viewer?project=${_adminOptions.projectId}`
+  let stackdriver = `https://console.cloud.google.com/logs/viewer?project=${_firebaseConfig.projectId}`
   stackdriver += `&advancedFilter=resource.type%3D"cloud_function"%0Aresource.labels.function_name%3D"${functionName}"`
   return stackdriver
 }
@@ -110,7 +110,7 @@ export const send = async (options: SendOptions) => {
   }
 
   webhookOptions.attachments[0].fields!.push(
-    { title: 'Project ID', value: _adminOptions.projectId || 'Unknown', short: true }
+    { title: 'Project ID', value: _firebaseConfig.projectId || 'Unknown', short: true }
   )
 
   if (options) {

@@ -12,14 +12,15 @@ const adminOptions = {
 }
 
 beforeAll(() => {
-  Slack.initialize(adminOptions,
+  global.process.env.FUNCTION_NAME = 'payOrder'
+  global.process.env.FUNCTION_MEMORY_MB = '256'
+  global.process.env.FIREBASE_CONFIG = JSON.stringify({ databaseURL: 'https://databaseName.firebaseio.com', storageBucket: 'projectId.appspot.com', projectId: 'sandbox-329fc' })
+  Slack.initialize(
     process.env.SLACK_URL as string,
     {
       channel: 'debug'
     }
   )
-  global.process.env.FUNCTION_NAME = 'payOrder'
-  global.process.env.FUNCTION_MEMORY_MB = '256'
 })
 
 let user: FirebaseFirestore.DocumentReference
