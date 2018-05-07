@@ -1,4 +1,3 @@
-import * as FirebaseFirestore from '@google-cloud/firestore';
 import * as Slack from 'typed-slack';
 /**
  * Initialize fire-slack in your index.ts.
@@ -15,7 +14,9 @@ export declare const initialize: (incomingUrl: string, defaultOptions?: {
  * Make Firestore database url
  * @param ref DocumentReference
  */
-export declare const makeFirestoreURL: (ref: FirebaseFirestore.DocumentReference) => string;
+export declare const makeFirestoreURL: (ref: {
+    path: string;
+}) => string;
 /**
  * Make Cloud Functions log url
  */
@@ -32,7 +33,9 @@ export interface SendOptions {
     /**
      * DocumentReference
      */
-    ref?: FirebaseFirestore.DocumentReference;
+    ref?: {
+        path: string;
+    };
     /**
      * Set error if you want to send an error.
      */

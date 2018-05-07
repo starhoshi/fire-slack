@@ -1,4 +1,3 @@
-import * as FirebaseFirestore from '@google-cloud/firestore'
 import * as Slack from 'typed-slack'
 
 let _channel: string | undefined
@@ -29,7 +28,7 @@ const baseURL = 'https://console.firebase.google.com/u/0/project/'
  * Make Firestore database url
  * @param ref DocumentReference
  */
-export const makeFirestoreURL = (ref: FirebaseFirestore.DocumentReference) => {
+export const makeFirestoreURL = (ref: { path: string }) => {
   const databaseURL = baseURL + (_firebaseConfig.projectId || '/projectId') + '/database/firestore/data~2F'
   const path = ref.path.replace(/\//g, '~2F')
 
@@ -61,7 +60,7 @@ export interface SendOptions {
   /**
    * DocumentReference
    */
-  ref?: FirebaseFirestore.DocumentReference
+  ref?: { path: string }
   /**
    * Set error if you want to send an error.
    */

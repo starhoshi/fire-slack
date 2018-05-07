@@ -23,7 +23,7 @@ beforeAll(() => {
   )
 })
 
-let user: FirebaseFirestore.DocumentReference
+let user: { path: string }
 const id = 'test'
 
 describe('exist options', () => {

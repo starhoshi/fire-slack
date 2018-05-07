@@ -47,7 +47,6 @@
     "typescript": "^2.8.1"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^0.13.1",
     "typed-slack": "^0.1.3"
   }
 }
