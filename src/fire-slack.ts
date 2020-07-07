@@ -87,9 +87,9 @@ export const send = async (options: SendOptions) => {
   webhookOptions.attachments[0].ts = webhookOptions.attachments[0].ts || new Date().getTime() / 1000
   webhookOptions.attachments[0].fields = webhookOptions.attachments[0].fields || []
 
-  if (global.process.env.FUNCTION_NAME) {
-    const functionName = global.process.env.FUNCTION_NAME
-    let value = global.process.env.FUNCTION_NAME
+  if (global.process.env.K_SERVICE) {
+    const functionName = global.process.env.K_SERVICE
+    let value = global.process.env.K_SERVICE
     if (global.process.env.FUNCTION_MEMORY_MB) {
       value += ` (${global.process.env.FUNCTION_MEMORY_MB} MB)`
     }
